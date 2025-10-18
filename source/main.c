@@ -235,6 +235,16 @@ struct stage0_addr_t stage0_addrs[] = {
 	}
 };
 
+enum APP_STATE {
+	APP_STATE_CHOOSE = 0,
+	APP_STATE_CONFIRM,
+	APP_STATE_EXPLOIT_INIT,
+	APP_STATE_EXPLOIT_RUNNING,
+	APP_STATE_EXPLOIT_FINISHED,
+	APP_STATE_EXPLOIT_CANCELED,
+	APP_STATE_EXPLOIT_FAILED,
+};
+
 static void WiiPowerButton()
 {
     quitState = 2;
@@ -565,16 +575,6 @@ static s32_t bluebomb_accept(s32_t result, void *userdata)
 
 	return ret;
 }
-
-enum APP_STATE {
-	APP_STATE_CHOOSE = 0,
-	APP_STATE_CONFIRM,
-	APP_STATE_EXPLOIT_INIT,
-	APP_STATE_EXPLOIT_RUNNING,
-	APP_STATE_EXPLOIT_FINISHED,
-	APP_STATE_EXPLOIT_CANCELED,
-	APP_STATE_EXPLOIT_FAILED,
-};
 
 static void console_set_cursor_pos(int line, int column) {
 	printf("\x1b[%d;%dH", line, column);
