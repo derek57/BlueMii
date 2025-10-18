@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<app>
+	<name>BlueMii</name>
+	<coder>FullMetal5 / Zarithya / nitr8</coder>
+	<version>v1.1</version>
+	<release_date>20251810004800</release_date>
+<short_description>Hack a Wii using another Wii</short_description>
+<long_description>
+BlueMii is a port of Fullmetal5's BlueBomb exploit for Broadcom's Bluetooth stack used in the Nintendo Wii, to the Nintendo Wii.  
+</long_description>
+</app>
+
