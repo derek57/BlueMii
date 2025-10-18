@@ -44,6 +44,189 @@ struct payload_info_t {
 	size_t remaining;
 } payload_info;
 
+struct ccb {
+	u8_t in_use;
+	u32_t chnl_state;
+	u32_t p_next_ccb;
+	u32_t p_prev_ccb;
+	u32_t p_lcb;
+	u16_t local_cid;
+	u16_t remote_cid;
+	// We only go up to the fields we care about, you should still leave the rest blank as there are some fields that should be just left zero after it like the timer object.
+};
+
+struct stage0_addr_t {
+	char name[32];
+	u32_t addr;
+};
+
+struct stage0_addr_t stage0_addrs[] = {
+	{
+		.name = "System Menu 2.0J",
+		.addr = 0x81172BC0
+	},
+	{
+		.name = "System Menu 2.0U",
+		.addr = 0x81158740
+	},
+	{
+		.name = "System Menu 2.0E",
+		.addr = 0x81158580
+	},
+	{
+		.name = "System Menu 2.1E",
+		.addr = 0x81158580
+	},
+	{
+		.name = "System Menu 2.2J",
+		.addr = 0x81172BC0
+	},
+	{
+		.name = "System Menu 2.2U",
+		.addr = 0x81158580
+	},
+	{
+		.name = "System Menu 2.2E",
+		.addr = 0x81158580
+	},
+	{
+		.name = "System Menu 3.0J",
+		.addr = 0x811893E0
+	},
+	{
+		.name = "System Menu 3.0U",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.0E",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.1J",
+		.addr = 0x811893E0
+	},
+	{
+		.name = "System Menu 3.1U",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.1E",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.2J",
+		.addr = 0x811893E0
+	},
+	{
+		.name = "System Menu 3.2U",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.2E",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.3J",
+		.addr = 0x811893E0
+	},
+	{
+		.name = "System Menu 3.3U",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.3E",
+		.addr = 0x81178CE0
+	},
+	{
+		.name = "System Menu 3.4J",
+		.addr = 0x811893E0
+	},
+	{
+		.name = "System Menu 3.4U",
+		.addr = 0x811797A0
+	},
+	{
+		.name = "System Menu 3.4E",
+		.addr = 0x811797A0
+	},
+	{
+		.name = "System Menu 3.5K",
+		.addr = 0x81177B20
+	},
+	{
+		.name = "System Menu 4.0J",
+		.addr = 0x81181A20
+	},
+	{
+		.name = "System Menu 4.0U",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.0E",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.0K",
+		.addr = 0x81170160
+	},
+	{
+		.name = "System Menu 4.1J",
+		.addr = 0x81181A20
+	},
+	{
+		.name = "System Menu 4.1U",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.1E",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.1K",
+		.addr = 0x81170160
+	},
+	{
+		.name = "System Menu 4.2J",
+		.addr = 0x81181A20
+	},
+	{
+		.name = "System Menu 4.2U",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.2E",
+		.addr = 0x81171DE0
+	},
+	{
+		.name = "System Menu 4.2K",
+		.addr = 0x81170160
+	},
+	{
+		.name = "System Menu 4.3J",
+		.addr = 0x81182220
+	},
+	{
+		.name = "System Menu 4.3U",
+		.addr = 0x811725E0
+	},
+	{
+		.name = "System Menu 4.3E",
+		.addr = 0x811725E0
+	},
+	{
+		.name = "System Menu 4.3K",
+		.addr = 0x81170960
+	},
+	{
+		.name = "Wii Mini System Menu (NTSC)",
+		.addr = 0x811725E0
+	},
+	{
+		.name = "Wii Mini System Menu (PAL)",
+		.addr = 0x81172620
+	}
+};
+
 static void WiiPowerButton()
 {
     quitState = 2;
@@ -162,17 +345,6 @@ static err_t do_hax(struct l2cap_pcb *pcb) {
 
 	return ERR_OK;
 }
-
-struct ccb {
-	u8_t in_use;
-	u32_t chnl_state;
-	u32_t p_next_ccb;
-	u32_t p_prev_ccb;
-	u32_t p_lcb;
-	u16_t local_cid;
-	u16_t remote_cid;
-	// We only go up to the fields we care about, you should still leave the rest blank as there are some fields that should be just left zero after it like the timer object.
-};
 
 static u32_t L2CB = 0;
 
@@ -392,178 +564,6 @@ static s32_t bluebomb_accept(s32_t result, void *userdata)
 
 	return ret;
 }
-
-struct stage0_addr_t {
-	char name[32];
-	u32_t addr;
-};
-
-struct stage0_addr_t stage0_addrs[] = {
-	{
-		.name = "System Menu 2.0J",
-		.addr = 0x81172BC0
-	},
-	{
-		.name = "System Menu 2.0U",
-		.addr = 0x81158740
-	},
-	{
-		.name = "System Menu 2.0E",
-		.addr = 0x81158580
-	},
-	{
-		.name = "System Menu 2.1E",
-		.addr = 0x81158580
-	},
-	{
-		.name = "System Menu 2.2J",
-		.addr = 0x81172BC0
-	},
-	{
-		.name = "System Menu 2.2U",
-		.addr = 0x81158580
-	},
-	{
-		.name = "System Menu 2.2E",
-		.addr = 0x81158580
-	},
-	{
-		.name = "System Menu 3.0J",
-		.addr = 0x811893E0
-	},
-	{
-		.name = "System Menu 3.0U",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.0E",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.1J",
-		.addr = 0x811893E0
-	},
-	{
-		.name = "System Menu 3.1U",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.1E",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.2J",
-		.addr = 0x811893E0
-	},
-	{
-		.name = "System Menu 3.2U",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.2E",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.3J",
-		.addr = 0x811893E0
-	},
-	{
-		.name = "System Menu 3.3U",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.3E",
-		.addr = 0x81178CE0
-	},
-	{
-		.name = "System Menu 3.4J",
-		.addr = 0x811893E0
-	},
-	{
-		.name = "System Menu 3.4U",
-		.addr = 0x811797A0
-	},
-	{
-		.name = "System Menu 3.4E",
-		.addr = 0x811797A0
-	},
-	{
-		.name = "System Menu 3.5K",
-		.addr = 0x81177B20
-	},
-	{
-		.name = "System Menu 4.0J",
-		.addr = 0x81181A20
-	},
-	{
-		.name = "System Menu 4.0U",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.0E",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.0K",
-		.addr = 0x81170160
-	},
-	{
-		.name = "System Menu 4.1J",
-		.addr = 0x81181A20
-	},
-	{
-		.name = "System Menu 4.1U",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.1E",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.1K",
-		.addr = 0x81170160
-	},
-	{
-		.name = "System Menu 4.2J",
-		.addr = 0x81181A20
-	},
-	{
-		.name = "System Menu 4.2U",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.2E",
-		.addr = 0x81171DE0
-	},
-	{
-		.name = "System Menu 4.2K",
-		.addr = 0x81170160
-	},
-	{
-		.name = "System Menu 4.3J",
-		.addr = 0x81182220
-	},
-	{
-		.name = "System Menu 4.3U",
-		.addr = 0x811725E0
-	},
-	{
-		.name = "System Menu 4.3E",
-		.addr = 0x811725E0
-	},
-	{
-		.name = "System Menu 4.3K",
-		.addr = 0x81170960
-	},
-	{
-		.name = "Wii Mini System Menu (NTSC)",
-		.addr = 0x811725E0
-	},
-	{
-		.name = "Wii Mini System Menu (PAL)",
-		.addr = 0x81172620
-	}
-};
 
 #define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
 
