@@ -660,7 +660,7 @@ int main(int argc, char **argv) {
 			case APP_STATE_CHOOSE:
 				console_set_cursor_pos(1, 0);
 				printf("%sBlueMii%s (Bluebomb v1.5)\n", color_blue, color_grey);
-				printf("Original exploit/code by %sFullmetal5%s, port by %sZarithya%s\n\n", color_turquoise, color_grey, color_magenta, color_grey);
+				printf("Original exploit/code by %sFullmetal5%s, port by %sZarithya%s, mod by %snitr8%s\n\n", color_turquoise, color_grey, color_magenta, color_grey, color_red, color_grey);
 
 				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
