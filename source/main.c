@@ -707,7 +707,7 @@ int main(int argc, char **argv) {
 					state++;
 				} else if (bomb_err != ERR_OK) {
 					printf("\n%sAn error occurred: code %d.%s\n", color_red, bomb_err, color_grey);
-					printf("Press %sA%s to restart, or press %sHOME/START%s to quit.\n", color_green, color_grey, color_turquoise, color_grey);
+					printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.\n", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -715,7 +715,7 @@ int main(int argc, char **argv) {
 				} else if (sync_pressed) {
 					sync_pressed = false;
 					printf("\nCanceled by user. You may need to hard reset the target system.\n");
-					printf("Press %sA%s to restart, or press %sHOME/START%s to quit.\n", color_green, color_grey, color_turquoise, color_grey);
+					printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.\n", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -726,7 +726,7 @@ int main(int argc, char **argv) {
 				console_set_cursor_pos(24, 0);
 				printf("Congrats! Your Wii is now running homebrew.\n");
 				printf("...Your other Wii, that is.\n\n");
-				printf("Press %sA%s to restart, or press %sHOME/START%s to quit.", color_green, color_grey, color_turquoise, color_grey);
+				printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
 				state++;
 				break;
 			case APP_STATE_EXPLOIT_CANCELED:
