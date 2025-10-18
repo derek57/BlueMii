@@ -676,6 +676,10 @@ int main(int argc, char **argv) {
 				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					state++;
 				}
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
+					quitState = 1;
+					break;
+				}
 				break;
 			case APP_STATE_CONFIRM:
 				console_set_cursor_pos(6, 0);
@@ -689,6 +693,10 @@ int main(int argc, char **argv) {
 					console_set_cursor_pos(6, 0);
 					console_clear_screen(0);
 					state--;
+				}
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
+					quitState = 1;
+					break;
 				}
 				break;
 			case APP_STATE_EXPLOIT_INIT:
@@ -731,7 +739,7 @@ int main(int argc, char **argv) {
 					BT_Shutdown();
 					WPAD_Init();
 					state = APP_STATE_EXPLOIT_FAILED;
-				} else if (sync_pressed) {
+				} else if (sync_pressed || (wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
 					sync_pressed = false;
 					printf("\nCanceled by user. You may need to hard reset the target system.\n");
 					printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.\n", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
