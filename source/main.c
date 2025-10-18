@@ -307,7 +307,8 @@ static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_
 {
 	if (PAYLOAD_RESP('S','0')) {
 		if (upload_payload(pcb, &payload_info) == ERR_COMPLETE) {
-			printf("\nJumping to payload!\n");
+			printf("\n");
+			printf("Jumping to payload!\n");
 			l2ca_bluebomb(pcb, NULL);
 			bomb_err = jump_payload(pcb);
 		}
@@ -319,7 +320,8 @@ static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_
 static err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 {
 	if (PAYLOAD_RESP('S','0')) {
-		printf("Got response!\nUploading payload...\n0 / %d", payload_info.length);
+		printf("Got response!\n);
+		printf("Uploading payload...\n0 / %d", payload_info.length);
 		fflush(stdout);
 		l2ca_bluebomb(pcb, bluebomb_success2);
 		return bluebomb_success2(arg, pcb, resp, id);
@@ -733,7 +735,8 @@ int main(int argc, char **argv) {
 					WPAD_Init();
 					state++;
 				} else if (bomb_err != ERR_OK) {
-					printf("\n%sAn error occurred: code %d.%s\n", color_red, bomb_err, color_grey);
+					printf("\n");
+					printf("%sAn error occurred: code %d.%s\n", color_red, bomb_err, color_grey);
 					printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.\n", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
@@ -741,7 +744,8 @@ int main(int argc, char **argv) {
 					state = APP_STATE_EXPLOIT_FAILED;
 				} else if (sync_pressed || (wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
 					sync_pressed = false;
-					printf("\nCanceled by user. You may need to hard reset the target system.\n");
+					printf("\n");
+					printf("Canceled by user. You may need to hard reset the target system.\n");
 					printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.\n", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
