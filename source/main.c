@@ -667,6 +667,11 @@ int main(int argc, char **argv) {
 				printf("Original exploit/code by %sFullmetal5%s, port by %sZarithya%s, mod by %snitr8%s\n\n", color_turquoise, color_grey, color_magenta, color_grey, color_red, color_grey);
 
 				console_clear_line(2);
+				printf("%s[NOTE]:%s If you're not getting past the following message:\n", color_red, color_grey);
+				printf("        'Awaiting response from stage0'\n");
+				printf("        Then you should probably hard-reset the target COMPLETELY\n");
+				printf("\n");
+				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
 
 				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_RIGHT) || (wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
@@ -684,7 +689,7 @@ int main(int argc, char **argv) {
 				}
 				break;
 			case APP_STATE_CONFIRM:
-				console_set_cursor_pos(6, 0);
+				console_set_cursor_pos(10, 0);
 				printf("Exploit target chosen: %s\n", stage0_addrs[which_addr].name);
 				printf("Press %sA%s to turn off all connected Wiimotes and begin the exploit process.\n", color_green, color_grey);
 				printf("Press %sB%s to go back and choose a different target.\n", color_red, color_grey);
@@ -692,7 +697,7 @@ int main(int argc, char **argv) {
 				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					state++;
 				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_B) || (wpad_pressed & WPAD_BUTTON_B) || (pad_pressed & PAD_BUTTON_B)) {
-					console_set_cursor_pos(6, 0);
+					console_set_cursor_pos(10, 0);
 					console_clear_screen(0);
 					state--;
 				}
@@ -703,9 +708,9 @@ int main(int argc, char **argv) {
 				break;
 			case APP_STATE_EXPLOIT_INIT:
 				WPAD_Shutdown();
-				console_set_cursor_pos(7, 0);
+				console_set_cursor_pos(11, 0);
 				console_clear_screen(0);
-				console_set_cursor_pos(8, 0);
+				console_set_cursor_pos(12, 0);
 				printf("Starting Bluebomb for target %s...\n\n", stage0_addrs[which_addr].name);
 				L2CB = stage0_addrs[which_addr].addr;
 
@@ -754,7 +759,7 @@ int main(int argc, char **argv) {
 				}
 				break;
 			case APP_STATE_EXPLOIT_FINISHED:
-				console_set_cursor_pos(24, 0);
+				console_set_cursor_pos(28, 0);
 				printf("Congrats! Your Wii is now running homebrew.\n");
 				printf("...Your other Wii, that is.\n\n");
 				printf("Press %sA%s to restart, or press %sHOME%s / %sSTART%s to quit.", color_green, color_grey, color_turquoise, color_grey, color_turquoise, color_grey);
@@ -765,7 +770,7 @@ int main(int argc, char **argv) {
 					console_clear_screen(2);
 					state = APP_STATE_CHOOSE;
 				} else if ((wpad_classic_pressed & WPAD_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
-					console_set_cursor_pos(6, 0);
+					console_set_cursor_pos(10, 0);
 					console_clear_screen(0);
 					quitState = 1;
 				}
@@ -775,7 +780,7 @@ int main(int argc, char **argv) {
 					console_clear_screen(2);
 					state = APP_STATE_CHOOSE;
 				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
-					console_set_cursor_pos(6, 0);
+					console_set_cursor_pos(9, 0);
 					console_clear_screen(0);
 					quitState = 1;
 				}
@@ -794,6 +799,7 @@ int main(int argc, char **argv) {
 	WPAD_Shutdown();
 	BT_Shutdown();
 
+	printf("\n");
 	printf("On this day, you truly BlueMii.\n");
 	sleep(2);
 
