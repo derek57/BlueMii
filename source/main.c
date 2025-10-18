@@ -703,7 +703,7 @@ int main(int argc, char **argv) {
 					state++;
 				} else if (bomb_err != ERR_OK) {
 					printf("\n\x1b[38;5;9mAn error occurred: code %d.\x1b[0\n", bomb_err);
-					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME\x1b[0m to quit.\n");
+					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.\n");
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -711,7 +711,7 @@ int main(int argc, char **argv) {
 				} else if (sync_pressed) {
 					sync_pressed = false;
 					printf("\nCanceled by user. You may need to hard reset the target system.\n");
-					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME\x1b[0m to quit.\n");
+					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.\n");
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -722,7 +722,7 @@ int main(int argc, char **argv) {
 				console_set_cursor_pos(24, 0);
 				printf("Congrats! Your Wii is now running homebrew.\n");
 				printf("...Your other Wii, that is.\n\n");
-				printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME\x1b[0m to quit.");
+				printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.");
 				state++;
 				break;
 			case APP_STATE_EXPLOIT_CANCELED:
