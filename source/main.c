@@ -247,7 +247,7 @@ enum APP_STATE {
 	APP_STATE_EXPLOIT_FAILED,
 };
 
-static void WiiPowerButton()
+static void WiiPowerButton(void)
 {
 	quitState = 2;
 }
