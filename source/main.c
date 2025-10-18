@@ -648,12 +648,14 @@ int main(int argc, char **argv) {
 	{
 		u32_t pad_pressed;
 		u32_t wpad_pressed;
+		u32_t wpad_classic_pressed;
 
 		PAD_ScanPads();
 		WPAD_ScanPads();
 
 		pad_pressed = PAD_ButtonsDown(0) | PAD_ButtonsDown(1) | PAD_ButtonsDown(2) | PAD_ButtonsDown(3);
 		wpad_pressed = WPAD_ButtonsDown(0) | WPAD_ButtonsDown(1) | WPAD_ButtonsDown(2) | WPAD_ButtonsDown(3);
+		wpad_classic_pressed = wpad_pressed;
 
 		switch (state)
 		{
@@ -665,10 +667,10 @@ int main(int argc, char **argv) {
 				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
 
-				if ((wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_RIGHT) || (wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
 					if (++which_addr >= ARRAY_COUNT(stage0_addrs))
 					which_addr = 0;
-				} else if ((wpad_pressed & WPAD_BUTTON_LEFT) || (pad_pressed & PAD_BUTTON_LEFT)) {
+				} else if ((wpad_pressed & WPAD_CLASSIC_BUTTON_LEFT) || (wpad_pressed & WPAD_BUTTON_LEFT) || (pad_pressed & PAD_BUTTON_LEFT)) {
 					if (--which_addr < 0)
 					which_addr = ARRAY_COUNT(stage0_addrs) - 1;
 				} else if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
@@ -681,9 +683,9 @@ int main(int argc, char **argv) {
 				printf("Press %sA%s to turn off all connected Wiimotes and begin the exploit process.\n", color_green, color_grey);
 				printf("Press %sB%s to go back and choose a different target.\n", color_red, color_grey);
 
-				if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					state++;
-				} else if ((wpad_pressed & WPAD_BUTTON_B) || (pad_pressed & PAD_BUTTON_B)) {
+				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_B) || (wpad_pressed & WPAD_BUTTON_B) || (pad_pressed & PAD_BUTTON_B)) {
 					console_set_cursor_pos(6, 0);
 					console_clear_screen(0);
 					state--;
@@ -747,20 +749,20 @@ int main(int argc, char **argv) {
 				state++;
 				break;
 			case APP_STATE_EXPLOIT_CANCELED:
-				if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					console_clear_screen(2);
 					state = APP_STATE_CHOOSE;
-				} else if ((wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
+				} else if ((wpad_classic_pressed & WPAD_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
 					console_set_cursor_pos(6, 0);
 					console_clear_screen(0);
 					quitState = 1;
 				}
 				break;
 			case APP_STATE_EXPLOIT_FAILED:
-				if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
+				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					console_clear_screen(2);
 					state = APP_STATE_CHOOSE;
-				} else if ((wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
+				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_HOME) || (wpad_pressed & WPAD_BUTTON_HOME) || (pad_pressed & PAD_BUTTON_START)) {
 					console_set_cursor_pos(6, 0);
 					console_clear_screen(0);
 					quitState = 1;
