@@ -670,10 +670,10 @@ int main(int argc, char **argv) {
 				if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_RIGHT) || (wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
 					if (++which_addr >= ARRAY_COUNT(stage0_addrs))
 					which_addr = 0;
-				} else if ((wpad_pressed & WPAD_CLASSIC_BUTTON_LEFT) || (wpad_pressed & WPAD_BUTTON_LEFT) || (pad_pressed & PAD_BUTTON_LEFT)) {
+				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_LEFT) || (wpad_pressed & WPAD_BUTTON_LEFT) || (pad_pressed & PAD_BUTTON_LEFT)) {
 					if (--which_addr < 0)
 					which_addr = ARRAY_COUNT(stage0_addrs) - 1;
-				} else if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
+				} else if ((wpad_classic_pressed & WPAD_CLASSIC_BUTTON_A) || (wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					state++;
 				}
 				break;
