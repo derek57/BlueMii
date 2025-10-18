@@ -52,10 +52,13 @@ static void WiiSyncButton(u32 held)
 	sync_pressed = true;
 }
 
+static char *color_red = "\x1b[38;5;160m";
+static char *color_grey = "\x1b[0m";
+
 err_t jump_payload(struct l2cap_pcb *pcb) {
 	err_t ret = ERR_OK;
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 1, &(pcb->remote_bdaddr), NULL)) != ERR_OK) {
-		fprintf(stderr, "\x1b[38;5;9mjump_payload: Failed to send signal packet (%d)\x1b[0m\n", ret);
+		fprintf(stderr, "%sjump_payload: Failed to send signal packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
 
@@ -70,14 +73,14 @@ err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info)
 	
 	int packet_size = payload_info->remaining >= PAYLOAD_MTU ? PAYLOAD_MTU : payload_info->remaining % PAYLOAD_MTU;
 	if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
-		fprintf(stderr, "\x1b[38;5;9mupload_payload: Could not allocate memory for pbuf\x1b[0m\n");
+		fprintf(stderr, "%supload_payload: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
 
 	memcpy(data->payload, payload_info->payload + payload_info->length- payload_info->remaining, packet_size);
 
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 0, &(pcb->remote_bdaddr), data)) != ERR_OK) {
-		fprintf(stderr, "\x1b[38;5;9mupload_payload: Failed to send payload packet (%d)\x1b[0m\n", ret);
+		fprintf(stderr, "%supload_payload: Failed to send payload packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
 
@@ -133,7 +136,7 @@ err_t do_hax(struct l2cap_pcb *pcb) {
 	printf("Overwriting callback in switch case 0x9.\n");
 	
 	if((data = btpbuf_alloc(PBUF_RAW, L2CAP_CMD_REJ_SIZE+4, PBUF_RAM)) == NULL) {
-		fprintf(stderr, "\x1b[38;5;9mdo_hax: Could not allocate memory for pbuf\x1b[0m\n");
+		fprintf(stderr, "%sdo_hax: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
 
@@ -142,14 +145,14 @@ err_t do_hax(struct l2cap_pcb *pcb) {
 	((u16_t *)data->payload)[2] = htole16(0x0040 + 0x1f); // lcid
 
 	if ((ret = l2cap_signal(pcb, L2CAP_CMD_REJ, 0, &(pcb->remote_bdaddr), data)) != ERR_OK) {
-		fprintf(stderr, "\x1b[38;5;9mdo_hax: Failed to send hax packet (%d)\x1b[0m\n", ret);
+		fprintf(stderr, "%sdo_hax: Failed to send hax packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
 	
 	printf("Trigger switch statement 0x9.\n");
 
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 0, &(pcb->remote_bdaddr), NULL)) != ERR_OK) {
-		fprintf(stderr, "\x1b[38;5;9mdo_hax: Failed to send trigger packet (%d)\x1b[0m\n", ret);
+		fprintf(stderr, "%sdo_hax: Failed to send trigger packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
 
@@ -179,7 +182,7 @@ err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 
 	printf("Sending SDP service response\n");
 	if((data = btpbuf_alloc(PBUF_RAW, required_size, PBUF_RAM)) == NULL) {
-		fprintf(stderr, "\x1b[38;5;9msend_sdp_service_response: Could not allocate memory for pbuf\x1b[0m\n");
+		fprintf(stderr, "%ssend_sdp_service_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
 
@@ -202,7 +205,7 @@ err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	UINT8_TO_BE_STREAM(p, 0x00); // ContinuationState
 
 	if ((ret = l2ca_datawrite(pcb,data)) != ERR_OK) {
-		fprintf(stderr, "\x1b[38;5;9msend_sdp_service_response: Failed to send SDP service response packet (%d)\x1b[0m\n", ret);
+		fprintf(stderr, "%ssend_sdp_service_response: Failed to send SDP service response packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
 	}
 
@@ -241,7 +244,7 @@ err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload
 		printf("Sending SDP attribute response\n");
 	
 		if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
-			fprintf(stderr, "\x1b[38;5;9msend_sdp_attribute_response: Could not allocate memory for pbuf\x1b[0m\n");
+			fprintf(stderr, "%ssend_sdp_attribute_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 			return ERR_MEM;
 		}
 
@@ -259,7 +262,7 @@ err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload
 		UINT8_TO_BE_STREAM(p, size_remaining <= SDP_MTU ? 0x00 : 0x01); // ContinuationState
 
 		if ((ret = l2ca_datawrite(pcb,data)) != ERR_OK) {
-			fprintf(stderr, "\x1b[38;5;9msend_sdp_attribute_response: Failed to send SDP attribute response packet (%d)\x1b[0m\n", ret);
+			fprintf(stderr, "%ssend_sdp_attribute_response: Failed to send SDP attribute response packet (%d)%s\n", color_red, ret, color_grey);
 			btpbuf_free(data);
 			return ret;
 		}
@@ -275,7 +278,7 @@ err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload
 		int payload_size = (size_remaining > SDP_MTU) ? SDP_MTU : size_remaining;
 		u16_t packet_size = 1 + 2 + 2 + 2 + payload_size + 1;
 		if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
-			fprintf(stderr, "\x1b[38;5;9msend_sdp_attribute_response: Could not allocate memory for pbuf\n");
+			fprintf(stderr, "%ssend_sdp_attribute_response: Could not allocate memory for pbuf\n", color_red);
 			return ERR_MEM;
 		}
 
@@ -289,7 +292,7 @@ err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload
 		UINT8_TO_BE_STREAM(p, size_remaining <= SDP_MTU ? 0x00 : 0x01); // ContinuationState
 		
 		if ((ret = l2ca_datawrite(pcb,data)) != ERR_OK) {
-			fprintf(stderr, "\x1b[38;5;9msend_sdp_attribute_response: Failed to send SDP attribute response packet (%d)\x1b[0m\n", ret);
+			fprintf(stderr, "%ssend_sdp_attribute_response: Failed to send SDP attribute response packet (%d)%s\n", color_red, ret, color_grey);
 			btpbuf_free(data);
 			return ret;
 		}
@@ -379,8 +382,8 @@ s32_t bluebomb_accept(s32_t result, void *userdata)
 		return ret;
 	}
 
-	printf("Bluebomb ready. Press \x1b[38;5;160mSYNC\x1b[0m on the target console to connect.\n");
-	printf("Press \x1b[38;5;160mSYNC\x1b[0m on this console to cancel.\n");
+	printf("Bluebomb ready. Press %sSYNC%s on the target console to connect.\n", color_red, color_grey);
+	printf("Press %sSYNC%s on this console to cancel.\n", color_red, color_grey);
 	printf("Waiting to accept...\n");
 
 	return ret;
@@ -582,6 +585,11 @@ void console_clear_screen(int mode) {
 	printf("\x1b[%dJ", mode);
 }
 
+static char *color_blue = "\x1b[38;5;39m";
+static char *color_magenta = "\x1b[38;5;99m";
+static char *color_turquoise = "\x1b[38;5;51m";
+static char *color_green = "\x1b[38;5;10m";
+
 int main(int argc, char **argv) {
 	struct l2cap_pcb *sdp_pcb = NULL;
 	enum APP_STATE state = APP_STATE_CHOOSE;
@@ -639,8 +647,8 @@ int main(int argc, char **argv) {
 		{
 			case APP_STATE_CHOOSE:
 				console_set_cursor_pos(1, 0);
-				printf("\x1b[38;5;39mBlueMii\x1b[0m (Bluebomb v1.5)\n");
-				printf("Original exploit/code by \x1b[38;5;123mFullmetal5\x1b[0m, port by \x1b[38;5;99mZarithya\x1b[0m\n\n");
+				printf("%sBlueMii%s (Bluebomb v1.5)\n", color_blue, color_grey);
+				printf("Original exploit/code by %sFullmetal5%s, port by %sZarithya%s\n\n", color_turquoise, color_grey, color_magenta, color_grey);
 				
 				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
@@ -657,8 +665,8 @@ int main(int argc, char **argv) {
 			case APP_STATE_CONFIRM:
 				console_set_cursor_pos(6, 0);
 				printf("Exploit target chosen: %s\n", stage0_addrs[which_addr].name);
-				printf("Press \x1b[38;5;10mA\x1b[0m to turn off all connected Wiimotes and begin the exploit process.\n");
-				printf("Press \x1b[38;5;9mB\x1b[0m to go back and choose a different target.\n");
+				printf("Press %sA%s to turn off all connected Wiimotes and begin the exploit process.\n", color_green, color_grey);
+				printf("Press %sB%s to go back and choose a different target.\n", color_red, color_grey);
 
 				if ((wpad_pressed & WPAD_BUTTON_A) || (pad_pressed & PAD_BUTTON_A)) {
 					state++;
@@ -702,8 +710,8 @@ int main(int argc, char **argv) {
 					WPAD_Init();
 					state++;
 				} else if (bomb_err != ERR_OK) {
-					printf("\n\x1b[38;5;9mAn error occurred: code %d.\x1b[0\n", bomb_err);
-					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.\n");
+					printf("\n%sAn error occurred: code %d.%s\n", color_red, bomb_err, color_grey);
+					printf("Press %sA%s to restart, or press %sHOME/START%s to quit.\n", color_green, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -711,7 +719,7 @@ int main(int argc, char **argv) {
 				} else if (sync_pressed) {
 					sync_pressed = false;
 					printf("\nCanceled by user. You may need to hard reset the target system.\n");
-					printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.\n");
+					printf("Press %sA%s to restart, or press %sHOME/START%s to quit.\n", color_green, color_grey, color_turquoise, color_grey);
 					sdp_pcb = NULL;
 					BT_Shutdown();
 					WPAD_Init();
@@ -722,7 +730,7 @@ int main(int argc, char **argv) {
 				console_set_cursor_pos(24, 0);
 				printf("Congrats! Your Wii is now running homebrew.\n");
 				printf("...Your other Wii, that is.\n\n");
-				printf("Press \x1b[38;5;10mA\x1b[0m to restart, or press \x1b[38;5;51mHOME/START\x1b[0m to quit.");
+				printf("Press %sA%s to restart, or press %sHOME/START%s to quit.", color_green, color_grey, color_turquoise, color_grey);
 				state++;
 				break;
 			case APP_STATE_EXPLOIT_CANCELED:
