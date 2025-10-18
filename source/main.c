@@ -24,6 +24,14 @@
 
 #define ERR_COMPLETE 1
 
+#define PAYLOAD_MTU 1024
+#define PAYLOAD_RESP(a,b) ((u16_t)((a) << 8) | (b))
+
+// TODO: Figure out the real MTU instead of choosing semi-random numbers
+#define SDP_MTU 0xD0
+
+#define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
+
 static void *xfb = NULL;
 static GXRModeObj *rmode = NULL;
 
@@ -252,8 +260,6 @@ static err_t jump_payload(struct l2cap_pcb *pcb) {
 	return ERR_COMPLETE;
 }
 
-#define PAYLOAD_MTU 1024
-
 static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info) {
 	err_t ret = 0;
 	struct pbuf *data;
@@ -282,8 +288,6 @@ static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payloa
 
 	return ERR_OK;
 }
-
-#define PAYLOAD_RESP(a,b) ((u16_t)((a) << 8) | (b))
 
 static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 {
@@ -401,9 +405,6 @@ static err_t __bluebomb_receive_dohax(void *arg,struct l2cap_pcb *pcb,struct pbu
 	}
 	return ret;
 }
-
-// TODO: Figure out the real MTU instead of choosing semi-random numbers
-#define SDP_MTU 0xD0
 
 static s32 size_remaining = 0;
 
@@ -564,8 +565,6 @@ static s32_t bluebomb_accept(s32_t result, void *userdata)
 
 	return ret;
 }
-
-#define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
 
 enum APP_STATE {
 	APP_STATE_CHOOSE = 0,
