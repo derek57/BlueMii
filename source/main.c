@@ -31,6 +31,13 @@ static bool sync_pressed = false;
 static err_t bomb_err = ERR_OK;
 static s32_t quitState = 0;
 
+static char *color_red = "\x1b[38;5;160m";
+static char *color_grey = "\x1b[0m";
+static char *color_blue = "\x1b[38;5;39m";
+static char *color_magenta = "\x1b[38;5;99m";
+static char *color_turquoise = "\x1b[38;5;51m";
+static char *color_green = "\x1b[38;5;10m";
+
 struct payload_info_t {
 	void *payload;
 	size_t length;
@@ -51,9 +58,6 @@ static void WiiSyncButton(u32 held)
 {
 	sync_pressed = true;
 }
-
-static char *color_red = "\x1b[38;5;160m";
-static char *color_grey = "\x1b[0m";
 
 err_t jump_payload(struct l2cap_pcb *pcb) {
 	err_t ret = ERR_OK;
@@ -584,11 +588,6 @@ void console_clear_line(int mode) {
 void console_clear_screen(int mode) {
 	printf("\x1b[%dJ", mode);
 }
-
-static char *color_blue = "\x1b[38;5;39m";
-static char *color_magenta = "\x1b[38;5;99m";
-static char *color_turquoise = "\x1b[38;5;51m";
-static char *color_green = "\x1b[38;5;10m";
 
 int main(int argc, char **argv) {
 	struct l2cap_pcb *sdp_pcb = NULL;
