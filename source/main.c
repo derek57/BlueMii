@@ -320,7 +320,7 @@ static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_
 static err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 {
 	if (PAYLOAD_RESP('S','0')) {
-		printf("Got response!\n);
+		printf("Got response!\n");
 		printf("Uploading payload...\n0 / %d", payload_info.length);
 		fflush(stdout);
 		l2ca_bluebomb(pcb, bluebomb_success2);
