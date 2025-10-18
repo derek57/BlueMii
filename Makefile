@@ -100,11 +100,18 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@mkdir -p publish/apps/BlueMii
+	@mv $(OUTPUT).dol publish/apps/BlueMii/boot.dol
+	@cp -r meta.xml publish/apps/BlueMii
+	@rm -rf $(OUTPUT).elf
+	@tar cvfz release.tar.gz -C publish .
 
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).dol
+	@rm -rf publish
+	@rm -f release.tar.gz
 
 #---------------------------------------------------------------------------------
 run:
