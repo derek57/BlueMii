@@ -38,6 +38,8 @@ static GXRModeObj *rmode = NULL;
 static bool sync_pressed = false;
 static err_t bomb_err = ERR_OK;
 static s32_t quitState = 0;
+static u32_t L2CB = 0;
+static s32 size_remaining = 0;
 
 static char *color_red = "\x1b[38;5;160m";
 static char *color_grey = "\x1b[0m";
@@ -360,8 +362,6 @@ static err_t do_hax(struct l2cap_pcb *pcb) {
 	return ERR_OK;
 }
 
-static u32_t L2CB = 0;
-
 static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	err_t ret = ERR_OK;
 	u8_t *p = NULL;
@@ -415,8 +415,6 @@ static err_t __bluebomb_receive_dohax(void *arg,struct l2cap_pcb *pcb,struct pbu
 	}
 	return ret;
 }
-
-static s32 size_remaining = 0;
 
 static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload, int len) {
 	err_t ret = ERR_OK;
