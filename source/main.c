@@ -59,7 +59,7 @@ static void WiiSyncButton(u32 held)
 	sync_pressed = true;
 }
 
-err_t jump_payload(struct l2cap_pcb *pcb) {
+static err_t jump_payload(struct l2cap_pcb *pcb) {
 	err_t ret = ERR_OK;
 	if ((ret = l2cap_signal(pcb, L2CAP_ECHO_RSP, 1, &(pcb->remote_bdaddr), NULL)) != ERR_OK) {
 		fprintf(stderr, "%sjump_payload: Failed to send signal packet (%d)%s\n", color_red, ret, color_grey);
@@ -71,7 +71,7 @@ err_t jump_payload(struct l2cap_pcb *pcb) {
 
 #define PAYLOAD_MTU 1024
 
-err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info) {
+static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info) {
 	err_t ret = 0;
 	struct pbuf *data;
 	
@@ -102,7 +102,7 @@ err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info)
 
 #define PAYLOAD_RESP(a,b) ((u16_t)((a) << 8) | (b))
 
-err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
+static err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 {
 	if (PAYLOAD_RESP('S','0')) {
 		if (upload_payload(pcb, &payload_info) == ERR_COMPLETE) {
@@ -115,7 +115,7 @@ err_t bluebomb_success2(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 	return ERR_OK;
 }
 
-err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
+static err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 {
 	if (PAYLOAD_RESP('S','0')) {
 		printf("Got response!\nUploading payload...\n0 / %d", payload_info.length);
@@ -127,13 +127,13 @@ err_t bluebomb_success(void *arg, struct l2cap_pcb *pcb, u16_t resp, u8_t id)
 	return ERR_OK;
 }
 
-err_t bluebomb_disconnected_ind(void *arg, struct l2cap_pcb *pcb, err_t err)
+static err_t bluebomb_disconnected_ind(void *arg, struct l2cap_pcb *pcb, err_t err)
 {
 	l2cap_close(pcb);
 	return ERR_OK;
 }
 
-err_t do_hax(struct l2cap_pcb *pcb) {
+static err_t do_hax(struct l2cap_pcb *pcb) {
 	err_t ret;
 	struct pbuf *data;
 	
@@ -174,9 +174,9 @@ struct ccb {
 	// We only go up to the fields we care about, you should still leave the rest blank as there are some fields that should be just left zero after it like the timer object.
 };
 
-u32_t L2CB = 0;
+static u32_t L2CB = 0;
 
-err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
+static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	err_t ret = ERR_OK;
 	u8_t *p = NULL;
 	u16_t required_size = 1 + 2 + 2 + 2 + 2 + (0x15 * 4) + 1;
@@ -233,9 +233,9 @@ static err_t __bluebomb_receive_dohax(void *arg,struct l2cap_pcb *pcb,struct pbu
 // TODO: Figure out the real MTU instead of choosing semi-random numbers
 #define SDP_MTU 0xD0
 
-s32 size_remaining = 0;
+static s32 size_remaining = 0;
 
-err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload, int len) {
+static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* payload, int len) {
 	err_t ret = ERR_OK;
 
 	u8_t *p = NULL;
@@ -350,7 +350,7 @@ static err_t __bluebomb_accept_step2(void *arg,struct l2cap_pcb *l2cappcb,err_t 
 	return err;
 }
 
-s32_t bluebomb_listenasync(struct l2cap_pcb **pcb, struct bd_addr *bdaddr)
+static s32_t bluebomb_listenasync(struct l2cap_pcb **pcb, struct bd_addr *bdaddr)
 {
 	u32 level;
 	s32 err = ERR_OK;
@@ -376,7 +376,7 @@ error:
 	return err;
 }
 
-s32_t bluebomb_accept(s32_t result, void *userdata)
+static s32_t bluebomb_accept(s32_t result, void *userdata)
 {
 	s32_t ret = ERR_OK;
 	struct l2cap_pcb **pcb = (struct l2cap_pcb **)userdata;
@@ -577,15 +577,15 @@ enum APP_STATE {
 	APP_STATE_EXPLOIT_FAILED,
 };
 
-void console_set_cursor_pos(int line, int column) {
+static void console_set_cursor_pos(int line, int column) {
 	printf("\x1b[%d;%dH", line, column);
 }
 
-void console_clear_line(int mode) {
+static void console_clear_line(int mode) {
 	printf("\x1b[%dK", mode);
 }
 
-void console_clear_screen(int mode) {
+static void console_clear_screen(int mode) {
 	printf("\x1b[%dJ", mode);
 }
 
@@ -771,3 +771,4 @@ int main(int argc, char **argv) {
 
 	return 0;
 }
+
