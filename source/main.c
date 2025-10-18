@@ -244,7 +244,7 @@ enum APP_STATE {
 	APP_STATE_EXPLOIT_RUNNING,
 	APP_STATE_EXPLOIT_FINISHED,
 	APP_STATE_EXPLOIT_CANCELED,
-	APP_STATE_EXPLOIT_FAILED,
+	APP_STATE_EXPLOIT_FAILED
 };
 
 static void WiiPowerButton(void)
@@ -274,8 +274,8 @@ static err_t jump_payload(struct l2cap_pcb *pcb) {
 }
 
 static err_t upload_payload(struct l2cap_pcb *pcb, struct payload_info_t* payload_info) {
-	err_t ret = 0;
 	struct pbuf *data;
+	err_t ret = 0;
 
 	int packet_size = payload_info->remaining >= PAYLOAD_MTU ? PAYLOAD_MTU : payload_info->remaining % PAYLOAD_MTU;
 
@@ -370,9 +370,10 @@ static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 	u16_t required_size = 1 + 2 + 2 + 2 + 2 + (0x15 * 4) + 1;
 	u32_t SDP_CB = L2CB + 0xc00;
 	struct pbuf *data = NULL;
-	struct ccb fake_ccb = {0};
+	struct ccb fake_ccb = { 0 };
 
 	printf("Sending SDP service response\n");
+
 	if ((data = btpbuf_alloc(PBUF_RAW, required_size, PBUF_RAM)) == NULL) {
 		fprintf(stderr, "%ssend_sdp_service_response: Could not allocate memory for pbuf%s\n", color_red, color_grey);
 		return ERR_MEM;
@@ -409,6 +410,7 @@ static err_t send_sdp_service_response(struct l2cap_pcb *pcb,u16_t tid) {
 static err_t __bluebomb_receive_dohax(void *arg,struct l2cap_pcb *pcb,struct pbuf *p,err_t err)
 {
 	err_t ret = ERR_OK;
+
 	printf("Doing hax\n");
 
 	if ((ret = do_hax(pcb)) == ERR_OK) {
@@ -430,6 +432,7 @@ static err_t send_sdp_attribute_response(struct l2cap_pcb *pcb,u16_t tid, void* 
 		size_remaining = len;
 		int payload_size = (size_remaining > SDP_MTU) ? SDP_MTU : size_remaining;
 		u16_t packet_size = 1 + 2 + 2 + 2 + 1 + 1 + 1 + 2 + 1 + payload_size + 1;
+
 		printf("Sending SDP attribute response\n");
 
 		if ((data = btpbuf_alloc(PBUF_RAW, packet_size, PBUF_RAM)) == NULL) {
@@ -641,13 +644,16 @@ int main(int argc, char **argv) {
 	PAD_Init();
 	WPAD_Init();
 
-	while(1) 
+	while (1)
 	{
+		u32_t pad_pressed;
+		u32_t wpad_pressed;
+
 		PAD_ScanPads();
 		WPAD_ScanPads();
 
-		u32_t pad_pressed = PAD_ButtonsDown(0) | PAD_ButtonsDown(1) | PAD_ButtonsDown(2) | PAD_ButtonsDown(3);
-		u32_t wpad_pressed = WPAD_ButtonsDown(0) | WPAD_ButtonsDown(1) | WPAD_ButtonsDown(2) | WPAD_ButtonsDown(3);
+		pad_pressed = PAD_ButtonsDown(0) | PAD_ButtonsDown(1) | PAD_ButtonsDown(2) | PAD_ButtonsDown(3);
+		wpad_pressed = WPAD_ButtonsDown(0) | WPAD_ButtonsDown(1) | WPAD_ButtonsDown(2) | WPAD_ButtonsDown(3);
 
 		switch (state)
 		{
